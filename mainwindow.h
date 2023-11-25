@@ -5,7 +5,7 @@
 #include <QTime>
 #include <QTimer>
 #include <QKeyEvent>
-#include <field.h>
+#include <espacio.h>
 
 namespace Ui {
 class MainWindow;
@@ -31,7 +31,7 @@ public slots:
 
 private slots:
     void timerTick();
-    //void updateField();
+    //void updateEspacio();
     void keyPressEvent(QKeyEvent * event);
 
     void on_Pause_clicked();
@@ -43,11 +43,11 @@ private:
     QTimer * timer;
     int time = 0;
 
-    QString fieldOutput;
+    QString espacioOutput;
     int currentKey = 0;
     int nextKey = 0;
 
-    Field * field;
+    Espacio * espacio;
 };
 
 #endif // MAINWINDOW_H

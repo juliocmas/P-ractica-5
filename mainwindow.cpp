@@ -1,9 +1,10 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include "field.h"
+#include "espacio.h"
 #include <QTimer>
 #include <QKeyEvent>
 #include <QtDebug>
+#include <QPixmap>
 
 // Constructor de la clase MainWindow
 MainWindow::MainWindow(QWidget *parent) :
@@ -23,8 +24,8 @@ MainWindow::MainWindow(QWidget *parent) :
     this->ui->Quit->setFocusPolicy(Qt::NoFocus);
 
     // Creación del campo de juego y agregarlo al diseño vertical
-    field = new Field;
-    ui->verticalLayout->addWidget(field);
+    espacio = new Espacio;
+    ui->verticalLayout->addWidget(espacio);
 }
 
 // Destructor de la clase MainWindow
@@ -37,10 +38,10 @@ MainWindow::~MainWindow()
 // Método invocado en cada tick del temporizador
 void MainWindow::timerTick() {
     // Si el juego está pausado, no hacer nada
-    if (field->gamePaused) return;
+    if (espacio->gamePaused) return;
 
     // Verificar si se ha alcanzado el límite de monedas para ganar el juego
-    if (field->coinCount > 150) onGameWin();
+    if (espacio->coinCount > 150) onGameWin();
 
     // Actualizar el tiempo y la interfaz de usuario
     time += 1;
@@ -48,41 +49,41 @@ void MainWindow::timerTick() {
     update();
 
     // Verificar y recoger monedas o cerezas
-    this->field->ifCoin();
+    this->espacio->ifCoin();
 
     // Actualizar la etiqueta de puntuación
-    ui->label->setNum(this->field->scoreCount);
+    ui->label->setNum(this->espacio->scoreCount);
 
     // Manejar el tiempo de debilidad del jugador
-    if (this->field->weaknessOn == true) {
-        this->field->powerUpTimer += 0.1;
-        if (this->field->powerUpTimer >= 10.0) {
-            this->field->weaknessOn = false;
+    if (this->espacio->weaknessOn == true) {
+        this->espacio->powerUpTimer += 0.1;
+        if (this->espacio->powerUpTimer >= 10.0) {
+            this->espacio->weaknessOn = false;
         } else {
             update();
         }
     }
 
     // Mover al jugador (Pacman) en la dirección especificada
-    if (this->field->pm_move(nextKey)) {
+    if (this->espacio->pm_move(nextKey)) {
         currentKey = nextKey;
     } else {
-        this->field->pm_move(currentKey);
+        this->espacio->pm_move(currentKey);
     }
 
     // Mover al fantasma en intervalos regulares
     if (time * 10 % 3 == 0) {
-        field->g_move();
+        espacio->g_move();
     }
 
     // Verificar colisión entre el jugador y el fantasma
-    if (field->pm_x == field->g_x && field->pm_y == field->g_y) {
+    if (espacio->pm_x == espacio->g_x && espacio->pm_y == espacio->g_y) {
         // Si el jugador está en modo débil, reiniciar la posición del fantasma y otorgar puntos
-        if (field->weaknessOn) {
-            field->g_x = 10;
-            field->g_y = 9;
-            field->scoreCount += 200;
-            field->weaknessOn = false;
+        if (espacio->weaknessOn) {
+            espacio->g_x = 10;
+            espacio->g_y = 9;
+            espacio->scoreCount += 200;
+            espacio->weaknessOn = false;
         } else {
             // Si no, terminar el juego
             endGame();
@@ -97,7 +98,7 @@ void MainWindow::keyPressEvent(QKeyEvent *event) {
 
 // Método para finalizar el juego
 void MainWindow::endGame() {
-    field->gameOver = true;
+    espacio->gameOver = true;
     timer->stop();
     update();
 }
@@ -109,25 +110,25 @@ void MainWindow::quitGame() {
 
 // Método invocado al ganar el juego
 void MainWindow::onGameWin() {
-    field->gameWon = true;
+    espacio->gameWon = true;
     timer->stop();
     update();
 }
 
 // Método para pausar o reanudar el juego
 void MainWindow::pauseGame() {
-    if (field->gamePaused) {
+    if (espacio->gamePaused) {
         ui->Pause->setText("Pause");
-        field->gamePaused = false;
+        espacio->gamePaused = false;
     } else {
         ui->Pause->setText("Unpause");
-        field->gamePaused = true;
+        espacio->gamePaused = true;
     }
 }
 
 // Método para reiniciar el juego
 void MainWindow::resetGame() {
-    field->restart();
+    espacio->restart();
     timer->stop();
     currentKey = 0;
     nextKey = 0;
@@ -145,14 +146,14 @@ void MainWindow::on_Quit_clicked() {
 
 // Manejar el clic en el botón de inicio/reinicio
 void MainWindow::on_Start_clicked() {
-    if (field->gameStarted) {
+    if (espacio->gameStarted) {
         // Si el juego está en curso, detener y reiniciar
-        field->gameStarted = false;
+        espacio->gameStarted = false;
         resetGame();
         ui->Start->setText("Start");
     } else {
         // Si no, iniciar el juego
-        field->gameStarted = true;
+        espacio->gameStarted = true;
         ui->Start->setText("Reset");
         timer->start(150); // Tiempo especificado en ms
     }
