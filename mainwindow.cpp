@@ -4,7 +4,6 @@
 #include <QTimer>
 #include <QKeyEvent>
 #include <QtDebug>
-#include <QPixmap>
 
 // Constructor de la clase MainWindow
 MainWindow::MainWindow(QWidget *parent) :

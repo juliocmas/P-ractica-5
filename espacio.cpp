@@ -8,7 +8,6 @@
 #include <vector>
 #include <utility>
 #include <QtDebug>
-#include <QPixmap>
 
 using namespace std;
 
@@ -88,17 +87,12 @@ void Espacio::paintEvent(QPaintEvent *Event) {
     }
 
 
-    // Dibujar al fantasma como una combinación de circunferencia y cuadrado relleno del mismo color
-    painter.fillRect(g_x * 42, g_y * 42 + 21, 42, 21, ghost_color);
+    // Dibujar al fantasma
+    painter.fillRect(g_x * 42, g_y * 42, 42, 42, blank_color);
     painter.setBrush(ghost_color);
-    painter.drawChord(g_x * 42, g_y * 42, 42, 42, 0, 180 * 16);
+    painter.drawEllipse(g_x * 42 + 6, g_y * 42 + 6, 30, 30);
 
-    // Dibujar dos círculos negros en la parte superior de la circunferencia
-    painter.setBrush(Qt::black);  //
-    painter.drawEllipse(g_x * 42 + 11, g_y * 42 + 5, 5, 5);
-    painter.drawEllipse(g_x * 42 + 26, g_y * 42 + 5, 5, 5);
-
-    // Mostrar mensajes de Game Over o You Won si es el caso
+    // Mostrar mensajes de "Game Over" o "Ganaste!!" si es el caso
     if (gameOver) {
         QFont font("Arial", 48);
         painter.setFont(font);
@@ -110,7 +104,7 @@ void Espacio::paintEvent(QPaintEvent *Event) {
         painter.setFont(font);
         QRectF rect{0, 0, double(espacioSize), double(espacioSize)};
         painter.setPen(Qt::white);
-        painter.drawText(rect, Qt::AlignHCenter | Qt::AlignVCenter, "You Won!");
+        painter.drawText(rect, Qt::AlignHCenter | Qt::AlignVCenter, "Ganaste!!");
     }
 }
 
